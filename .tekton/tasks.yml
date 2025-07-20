@@ -3,7 +3,7 @@ kind: Task
 metadata:
   name: cleanup
 spec:
-  description: This task will clean up a workspace by deleting all of the files.
+  description: This task will clean up a workspace by deleting all the files.
   workspaces:
     - name: source
   steps:
@@ -14,7 +14,7 @@ spec:
           value: $(workspaces.source.path)
       workingDir: $(workspaces.source.path)
       securityContext:
-        runAsNonRoot: false
+        runAsNonRoot: False
         runAsUser: 0
       script: |
         #!/usr/bin/env sh
@@ -39,13 +39,13 @@ kind: Task
 metadata:
   name: nose
 spec:
+  workspaces:
+    - name: source
   params:
     - name: args
       description: Arguments to pass to nose
       type: string
       default: "-v"
-  workspaces:
-    - name: source
   steps:
     - name: nosetests
       image: python:3.9-slim
@@ -53,14 +53,6 @@ spec:
       script: |
         #!/bin/bash
         set -e
-
-        echo "***** Environment *****"
-        python --version
-        pwd
-
-        echo "***** Installing dependencies *****"
         python -m pip install --upgrade pip wheel
         pip install -r requirements.txt
-
-        echo "***** Running nosetests with: $(params.args)"
         nosetests $(params.args)
